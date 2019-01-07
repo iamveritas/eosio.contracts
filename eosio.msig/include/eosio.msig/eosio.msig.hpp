@@ -5,22 +5,79 @@
 
 namespace eosio {
 
+   /**
+    * This contract defines the structures and actions needed to manage the proposals and approvals 
+    * on blockchain.
+    */ 
    class [[eosio::contract("eosio.msig")]] multisig : public contract {
       public:
          using contract::contract;
 
+         /**
+          * Create a proposal
+          * 
+          * @param proposer - The account proposing a transaction
+          * @param proposal_name - The name of the proposal (should be unique for proposer)
+          * @param requested - Permission levels expected to approve the proposal
+          * @param trx - Proposed transaction
+          * 
+          * Allows an account `proposer` to make a proposal `proposal_name` which has `requested`
+          * permission levels expected to approve the proposal, and if approved by all expected 
+          * permission levels then `trx` transation can we executed by this proposal.
+          * The `proposer` account is authorized, the `trx` transaction is verified if it was 
+          * authorized by the provided keys and permissions and if the proposal name doesn’t 
+          * already exist; if all validations pass the `proposal_name` and `trx` trasanction are 
+          * saved in the proposals table and the `requested` permission levels to the 
+          * approvals table (for the `proposer` context).
+          * Storage changes are billed to `proposer`.
+          */
          [[eosio::action]]
          void propose(ignore<name> proposer, ignore<name> proposal_name,
                ignore<std::vector<permission_level>> requested, ignore<transaction> trx);
+         /**
+          * Approve a proposal
+          * 
+          * @param proposer - The account proposing a transaction
+          * @param proposal_name - The name of the proposal (should be unique for proposer)
+          * @param level - Permission level approving the transaction
+          * @param proposal_hash - Proposal checksum
+          * 
+          * Allows an account, the owner of `level` permission, to approve a proposal `proposal_name`
+          * proposed by `proposer`. If the proposal's requested approval list contains the `level` 
+          * permission then the `level` permission is moved from internal `requested_approvals` list to 
+          * internal `provided_approvals` list of the proposal, thus persisting the approval for 
+          * the `proposal_name` proposal.
+          * Storage changes are billed to `proposer`.
+          */
          [[eosio::action]]
          void approve( name proposer, name proposal_name, permission_level level,
                        const eosio::binary_extension<eosio::checksum256>& proposal_hash );
+         /**
+          * Revoke a proposal
+          * 
+          * @param proposer - The account proposing a transaction
+          * @param proposal_name - The name of the proposal (should be an existing proposal)
+          * @param level - Permission level revoking approval for proposal
+          * 
+          *  This action is the reverse of the `approve` action: if all validations pass 
+          *  the `level` permission is erased from internal `provided_approvals` and added to internal 
+          *  `requested_approvals` list, and thus un-approve or revoke the proposal.
+          */
          [[eosio::action]]
          void unapprove( name proposer, name proposal_name, permission_level level );
+         /**
+          * TO DO: Ovi
+          */
          [[eosio::action]]
          void cancel( name proposer, name proposal_name, name canceler );
+         /**
+          * TO DO: Ovi
+          */
          [[eosio::action]]
          void exec( name proposer, name proposal_name, name executer );
+         /**
+          * TO DO: Ovi
+          */
          [[eosio::action]]
          void invalidate( name account );
 
