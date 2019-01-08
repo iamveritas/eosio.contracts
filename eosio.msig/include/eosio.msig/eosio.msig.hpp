@@ -14,7 +14,7 @@ namespace eosio {
          using contract::contract;
 
          /**
-          * Create a proposal
+          * Creates a proposal
           * 
           * @param proposer - The account proposing a transaction
           * @param proposal_name - The name of the proposal (should be unique for proposer)
@@ -35,12 +35,12 @@ namespace eosio {
          void propose(ignore<name> proposer, ignore<name> proposal_name,
                ignore<std::vector<permission_level>> requested, ignore<transaction> trx);
          /**
-          * Approve a proposal
+          * Approves a proposal
           * 
           * @param proposer - The account proposing a transaction
           * @param proposal_name - The name of the proposal (should be unique for proposer)
           * @param level - Permission level approving the transaction
-          * @param proposal_hash - Proposal checksum
+          * @param proposal_hash - Transaction's checksum
           * 
           * Allows an account, the owner of `level` permission, to approve a proposal `proposal_name`
           * proposed by `proposer`. If the proposal's requested approval list contains the `level` 
@@ -53,7 +53,7 @@ namespace eosio {
          void approve( name proposer, name proposal_name, permission_level level,
                        const eosio::binary_extension<eosio::checksum256>& proposal_hash );
          /**
-          * Revoke a proposal
+          * Revokes a proposal
           * 
           * @param proposer - The account proposing a transaction
           * @param proposal_name - The name of the proposal (should be an existing proposal)
@@ -66,17 +66,46 @@ namespace eosio {
          [[eosio::action]]
          void unapprove( name proposer, name proposal_name, permission_level level );
          /**
-          * TO DO: Ovi
+          * Cancels a proposal
+          * 
+          * @param proposer - The account proposing a transaction
+          * @param proposal_name - The name of the proposal (should be an existing proposal)
+          * @param canceler - The account cancelling the proposal (only proposer can cancel not expired transaction, and canceler has to be different than proposal)
+          * 
+          * Allows the `canceler` account to cancel the `proposal_name` proposal, created by a `proposer`, 
+          * only after time has expired on the proposed transaction. It removes corresponding entries from  
+          * internal proptable and from approval (or old approvals) tables as well.
           */
          [[eosio::action]]
          void cancel( name proposer, name proposal_name, name canceler );
          /**
-          * TO DO: Ovi
+          * Executes a proposal
+          * 
+          * @param proposer - The account proposing a transaction
+          * @param proposal_name - The name of the proposal (should be an existing proposal)
+          * @param executer - The account executing the transaction
+          * 
+          * Allows an `executer` to execute a proposal.
+          * 
+          * Preconditions: 
+          * - `executer` has authorization, 
+          * - `proposal_name` is found in the proposals table, 
+          * - all requested approvals are received, 
+          * - proposed transaction is not expired, 
+          * - and approval accounts are not found in invalidations table. 
+          * 
+          * If all preconditions are met the transaction is executed as a deffered transaction,
+          * and the proposal is erased from the proposals table.
           */
          [[eosio::action]]
          void exec( name proposer, name proposal_name, name executer );
          /**
-          * TO DO: Ovi
+          * Invalidates a proposal
+          * 
+          * @param account - The account invalidating the transaction
+          * 
+          * Allows an `account` to invalidate itself, that is, its name is added to the invalidations 
+          * table and this table will be cross referenced when exec is performed
           */
          [[eosio::action]]
          void invalidate( name account );
