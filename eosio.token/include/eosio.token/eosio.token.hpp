@@ -17,6 +17,12 @@ namespace eosio {
 
    using std::string;
 
+   /**
+    * @defgroup eosiotoken eosio.token
+    * @ingroup eosiocontracts
+    * @brief eosio.token contract defines the structures and actions which governs the tokens creation, issuing and transfer no blockchain.
+    * @{
+    */
    class [[eosio::contract("eosio.token")]] token : public contract {
       public:
          using contract::contract;
@@ -78,5 +84,5 @@ namespace eosio {
          void sub_balance( name owner, asset value );
          void add_balance( name owner, asset value, name ram_payer );
    };
-
+   /** @}*/
 } /// namespace eosio

@@ -4,11 +4,12 @@
 #include <eosiolib/transaction.hpp>
 
 namespace eosio {
-
    /**
-    * This contract defines the structures and actions needed to manage the proposals and approvals 
-    * on blockchain.
-    */ 
+    * @defgroup eosiomsig eosio.msig
+    * @ingroup eosiocontracts
+    * @brief eosio.msig contract defines the structures and actions needed to manage the proposals and approvals on blockchain.
+    * @{
+    */
    class [[eosio::contract("eosio.msig")]] multisig : public contract {
       public:
          using contract::contract;
@@ -156,5 +157,5 @@ namespace eosio {
 
          typedef eosio::multi_index< "invals"_n, invalidation > invalidations;
    };
-
+   /** @}*/
 } /// namespace eosio

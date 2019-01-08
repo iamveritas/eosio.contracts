@@ -15,6 +15,12 @@
 
 namespace eosiosystem {
 
+   /**
+    * @defgroup eosiosystem eosio.system
+    * @ingroup eosiocontracts
+    * @brief eosio.system contract defines the structures and actions needed for blockchain's core functionality.
+    * @{
+    */
    using eosio::name;
    using eosio::asset;
    using eosio::symbol;
@@ -352,5 +358,5 @@ namespace eosiosystem {
          double update_total_votepay_share( time_point ct,
                                             double additional_shares_delta = 0.0, double shares_rate_delta = 0.0 );
    };
-
+   /** @}*/
 } /// eosiosystem

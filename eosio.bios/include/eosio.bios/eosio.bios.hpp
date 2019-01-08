@@ -6,6 +6,10 @@
 #include <eosiolib/producer_schedule.hpp>
 
 namespace eosio {
+   /**
+    *  @defgroup eosiocontracts eosio.contracts
+    */
+
    using eosio::permission_level;
    using eosio::public_key;
    using eosio::ignore;
@@ -59,6 +63,12 @@ namespace eosio {
                                      (schedule_version)(new_producers))
    };
 
+   /**
+    * @defgroup eosiobios eosio.bios
+    * @ingroup eosiocontracts
+    * @brief eosio.bios contract defines the structures and actions needed for blockchain's boot.
+    * @{
+    */
    class [[eosio::contract("eosio.bios")]] bios : public contract {
       public:
          using contract::contract;
@@ -166,5 +176,5 @@ namespace eosio {
 
          typedef eosio::multi_index< "abihash"_n, abi_hash > abi_hash_table;
    };
-
+   /** @}*/
 } /// namespace eosio
