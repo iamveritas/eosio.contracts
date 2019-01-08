@@ -6,14 +6,16 @@
 
 namespace eosio {
    /**
-    * osio.wrap is a contract that simplifies Block Producer superuser actions by making them more 
-    * readable and easier to audit.
-    * 
+    * @defgroup eosiowrap eosio.wrap
+    * @ingroup eosiocontracts
+    * @brief eosio.wrap contract simplifies Block Producer superuser actions by making them more readable and easier to audit.
+
     * It does not grant block producers any additional powers that do not already exist within the 
     * system. Currently, 15/21 block producers can already change an account's keys or modify an 
     * account's contract at the request of ECAF or an account's owner. However, the current method 
     * is opaque and leaves undesirable side effects on specific system accounts. 
     * eosio.wrap allows for a cleaner method of implementing these important governance actions.
+    * @{
     */
    class [[eosio::contract("eosio.wrap")]] wrap : public contract {
       public:
@@ -27,5 +29,5 @@ namespace eosio {
          void exec( ignore<name> executer, ignore<transaction> trx );
 
    };
-
+   /** @}*/
 } /// namespace eosio
