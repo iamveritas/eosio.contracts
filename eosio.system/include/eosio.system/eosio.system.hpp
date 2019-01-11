@@ -464,6 +464,10 @@ namespace eosiosystem {
           * Register producer action.
           * 
           * @details This method will create a `producer_config` and `producer_info` object for `producer`.
+          * @param producer - the account of the block producer to be registered
+          * @param producer_key - the public key of the block producer, this is the key used by block producer to sign blocks.
+          * @param url - the url of the block producer, normally the url of the block producer presentation website
+          * @param location - is the country code as defined in the ISO 3166, https://en.wikipedia.org/wiki/List_of_ISO_3166_country_codes
           */
          [[eosio::action]]
          void regproducer( const name producer, const public_key& producer_key, const std::string& url, uint16_t location );
