@@ -155,9 +155,9 @@ namespace eosiosystem {
                           ignore<authority> owner,
                           ignore<authority> active);
 
-         // TO DO: Ovi annotate the last 8 actions
          /**
           * Update authorization action.
+          * TO DO: Ovi annotate the last 8 actions
           */
          [[eosio::action]]
          void updateauth(  ignore<name>  account,

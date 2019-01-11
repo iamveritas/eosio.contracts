@@ -149,7 +149,7 @@ namespace eosio {
                           ignore<authority> owner,
                           ignore<authority> active){}
          /**
-          * TO DO Ovi, annotate the following 7 actions which are not exposed in the contract
+          * TO DO: Ovi, annotate the following 7 actions which are not exposed in the contract
           * at least we should say why are they defined here, for what purpose they server.
           */
          [[eosio::action]]
@@ -157,42 +157,28 @@ namespace eosio {
                            ignore<name>  permission,
                            ignore<name>  parent,
                            ignore<authority> auth ) {}
-         /**
-          * TO DO Ovi
-          */
+
          [[eosio::action]]
          void deleteauth( ignore<name>  account,
                           ignore<name>  permission ) {}
-         /**
-          * TO DO Ovi
-          */
+
          [[eosio::action]]
          void linkauth(  ignore<name>    account,
                          ignore<name>    code,
                          ignore<name>    type,
                          ignore<name>    requirement  ) {}
-         /**
-          * TO DO Ovi
-          */
+
          [[eosio::action]]
          void unlinkauth( ignore<name>  account,
                           ignore<name>  code,
                           ignore<name>  type ) {}
-         /**
-          * TO DO Ovi
-          */
+
          [[eosio::action]]
          void canceldelay( ignore<permission_level> canceling_auth, ignore<capi_checksum256> trx_id ) {}
 
-         /**
-          * TO DO Ovi
-          */
          [[eosio::action]]
          void onerror( ignore<uint128_t> sender_id, ignore<std::vector<char>> sent_trx ) {}
 
-         /**
-          * TO DO Ovi
-          */
          [[eosio::action]]
          void setcode( name account, uint8_t vmtype, uint8_t vmversion, const std::vector<char>& code ) {}
 
