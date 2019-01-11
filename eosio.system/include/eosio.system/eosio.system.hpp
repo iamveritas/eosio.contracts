@@ -13,10 +13,6 @@
 
 #include <string>
 
-/**
- * @defgroup eosiosystemnamespace eosiosystem namespace
- * @ingroup eosiocontracts
- */
 namespace eosiosystem {
 
    using eosio::name;
@@ -32,7 +28,7 @@ namespace eosiosystem {
 
    /**
     * @defgroup eosiosystem eosio.system
-    * @ingroup eosiosystemnamespace
+    * @ingroup eosiocontracts
     * eosio.system contract defines the structures and actions needed for blockchain's core functionality.
     * @{
     */
@@ -290,10 +286,10 @@ namespace eosiosystem {
           * 
           * @details Constructs a system contract based on name, code and data.
           * 
-          * @params s    - the name of the contract
+          * @params s    - the name of the contract,
           * TO DO: Ovi explain better the next param
-          * @params code - the code name of the contract
-          * @params ds   - the contract data represented as an `eosio::datastream`
+          * @params code - the code name of the contract,
+          * @params ds   - the contract data represented as an `eosio::datastream`.
           */
          system_contract( name s, name code, datastream<const char*> ds );
          ~system_contract();
@@ -319,6 +315,9 @@ namespace eosiosystem {
           * - symbol is found and
           * - system token supply is greater than 0, 
           * - and system contract wasn’t already been initialized.
+          * 
+          * @param version - the version, has to be 0,
+          * @param core - the system symbol.
           */
          [[eosio::action]]
          void init( unsigned_int version, symbol core );
@@ -342,21 +341,26 @@ namespace eosiosystem {
           * 
           * @details Set the resource limits of an account
           * 
-          * @param account - name of the account whose resource limit to be set
-          * @param ram_bytes - ram limit in absolute bytes
-          * @param net_weight - fractionally proportionate net limit of available resources based on (weight / total_weight_of_all_accounts)
-          * @param cpu_weight - fractionally proportionate cpu limit of available resources based on (weight / total_weight_of_all_accounts)
+          * @param account - name of the account whose resource limit to be set,
+          * @param ram_bytes - ram limit in absolute bytes,
+          * @param net_weight - fractionally proportionate net limit of available resources based on (weight / total_weight_of_all_accounts),
+          * @param cpu_weight - fractionally proportionate cpu limit of available resources based on (weight / total_weight_of_all_accounts).
           */
          [[eosio::action]]
          void setalimits( name account, int64_t ram_bytes, int64_t net_weight, int64_t cpu_weight );
          // functions defined in delegate_bandwidth.cpp
 
          /**
-          * Delegate bandwidth action.
+          * Delegate bandwidth and/or cpu action.
           * 
           * @details Stakes SYS from the balance of `from` for the benfit of `receiver`.
-          * If transfer == true, then `receiver` can unstake to their account
-          * Else `from` can unstake at any time.
+          * 
+          * @param from - the account to delegate bandwidth from,
+          * @param receiver - the account to delegate bandwith to,
+          * @param stake_net_quantity - the amount of bandwidth to delegate,
+          * @param stake_cpu_quantity - the amount of cpu to delegate,
+          * @param transfer - if true, then `receiver` can unstake to their account, 
+          *                   else `from` can unstake at any time.
           */
          [[eosio::action]]
          void delegatebw( name from, name receiver,
@@ -368,17 +372,19 @@ namespace eosiosystem {
           * @details Decreases the total tokens delegated by `from` to `receiver` and/or
           * frees the memory associated with the delegation if there is nothing
           * left to delegate.
-          *
           * This will cause an immediate reduction in net/cpu bandwidth of the
           * receiver.
-          *
           * A transaction is scheduled to send the tokens back to `from` after
           * the staking period has passed. If existing transaction is scheduled, it
           * will be canceled and a new transaction issued that has the combined
           * undelegated amount.
-          *
           * The `from` account loses voting power as a result of this call and
           * all producer tallies are updated.
+          * 
+          * @param from - the account to undelegate bandwidth from,
+          * @param receiver - the account to undelegate bandwith to,
+          * @param unstake_net_quantity - the amount of bandwidth to undelegate,
+          * @param unstake_cpu_quantity - the amount of cpu to undelegate,
           */
          [[eosio::action]]
          void undelegatebw( name from, name receiver,
@@ -390,6 +396,10 @@ namespace eosiosystem {
           * @details Increases receiver's ram quota based upon current price and quantity of
           * tokens provided. An inline transfer from receiver to system contract of
           * tokens will be executed.
+          * 
+          * @param payer - the ram buyer,
+          * @param receiver - the ram receiver,
+          * @param quant - the quntity of tokens to by ram with.
           */
          [[eosio::action]]
          void buyram( name payer, name receiver, asset quant );
@@ -399,6 +409,10 @@ namespace eosiosystem {
           * 
           * @details Increases receiver's ram in quantity of bytes provided. 
           * An inline transfer from receiver to system contract of tokens will be executed.
+          * 
+          * @param payer - the ram buyer,
+          * @param receiver - the ram receiver,
+          * @param bytes - the quntity of ram to buy specified in bytes.
           */
          [[eosio::action]]
          void buyrambytes( name payer, name receiver, uint32_t bytes );
@@ -408,6 +422,9 @@ namespace eosiosystem {
           *  
           * @details Reduces quota my bytes and then performs an inline transfer of tokens
           * to receiver based upon the average purchase price of the original quota.
+          * 
+          * @param account - the ram seller account,
+          * @param bytes - the amount of ram to sell in bytes.
           */
          [[eosio::action]]
          void sellram( name account, int64_t bytes );
@@ -416,7 +433,9 @@ namespace eosiosystem {
           * Refund action.
           * 
           * @details This action is called after the delegation-period to claim all pending
-          * unstaked tokens belonging to owner
+          * unstaked tokens belonging to owner.
+          * 
+          * @param owner - the owner of the tokens claimed.
           */
          [[eosio::action]]
          void refund( name owner );
@@ -426,107 +445,171 @@ namespace eosiosystem {
          /**
           * Register producer action.
           * 
-          * @details This method will create a `producer_config` and `producer_info` object for `producer`.
-          * @param producer - the account of the block producer to be registered
-          * @param producer_key - the public key of the block producer, this is the key used by block producer to sign blocks.
-          * @param url - the url of the block producer, normally the url of the block producer presentation website
+          * @details Register producer action, this action will create a `producer_config` and a
+          * `producer_info` object for `producer` scope in producers tables.
+          * 
+          * @param producer - the account of the block producer to be registered,
+          * @param producer_key - the public key of the block producer, this is the key used by block producer to sign blocks,
+          * @param url - the url of the block producer, normally the url of the block producer presentation website,
           * @param location - is the country code as defined in the ISO 3166, https://en.wikipedia.org/wiki/List_of_ISO_3166_country_codes
+          * 
+          * @pre Producer is not already registered
+          * @pre Producer to register is an account
+          * @pre Authority of producer to register
           */
          [[eosio::action]]
          void regproducer( const name producer, const public_key& producer_key, const std::string& url, uint16_t location );
 
          /**
-          * TO DO: Ovi
+          * Unregister producer action.
           * 
-          * @details 
+          * @details Deactivate the block producer with account name `producer`.
+          * @param producer - the block producer account to unregister.
           */
          [[eosio::action]]
          void unregprod( const name producer );
 
          /**
-          * TO DO: Ovi
+          * Set ram action.
           * 
-          * @details 
+          * @details Set the ram supply.
+          * @param max_ram_size - the amount of ram supply to set.
           */
          [[eosio::action]]
          void setram( uint64_t max_ram_size );
+
          /**
-          * TO DO: Ovi
+          * Set ram rate action.
           * 
-          * @details 
+          * @details Set the ram increase rate.
+          * @param bytes_per_block - the amount of bytes per block increase to set.
           */
          [[eosio::action]]
          void setramrate( uint16_t bytes_per_block );
 
          /**
-          * TO DO: Ovi
+          * Vote producer action.
           * 
-          * @details 
+          * @details Votes for a set of producers. This action updates the list of `producers` voted for, 
+          * for `voter` account. If voting for a `proxy`, the producer votes will not change until the 
+          * proxy updates their own vote.
+          * 
+          * @params voter - the account to change the voted producers for,
+          * @params proxy - the proxy to change the voted producers for,
+          * @producers - the list of producers to vote for.
+          * 
+          * @pre Producers must be sorted from lowest to highest and must be registered and active
+          * @pre If proxy is set then no producers can be voted for
+          * @pre If proxy is set then proxy account must exist and be registered as a proxy
+          * @pre Every listed producer or proxy must have been previously registered
+          * @pre Voter must authorize this action
+          * @pre Voter must have previously staked some EOS for voting
+          * @pre Voter->staked must be up to date
+          *
+          * @post Every producer previously voted for will have vote reduced by previous vote weight
+          * @post Every producer newly voted for will have vote increased by new vote amount
+          * @post Prior proxy will proxied_vote_weight decremented by previous vote weight
+          * @post New proxy will proxied_vote_weight incremented by new vote weight
           */
          [[eosio::action]]
          void voteproducer( const name voter, const name proxy, const std::vector<name>& producers );
 
          /**
-          * TO DO: Ovi
+          * Register proxy action.
           * 
-          * @details 
+          * @details Set `proxy` account as proxy.
+          * An account marked as a proxy can vote with the weight of other accounts which
+          * have selected it as a proxy. Other accounts must refresh their voteproducer to
+          * update the proxy's weight.
+          *
+          * @param rpoxy - the account to set as proxy,
+          * @param isproxy - true if proxy wishes to vote on behalf of others, false otherwise.
+          * 
+          * @pre Proxy must have something staked (existing row in voters table)
+          * @pre New state must be different than current state
           */
          [[eosio::action]]
          void regproxy( const name proxy, bool isproxy );
 
          /**
-          * TO DO: Ovi
+          * Set the blockchain parameters
           * 
-          * @details 
+          * @details Set the blockchain parameters. By tunning these parameters a degree of 
+          * customization can be achieved.
+          * @param params - New blockchain parameters to set.
           */
          [[eosio::action]]
          void setparams( const eosio::blockchain_parameters& params );
 
          // functions defined in producer_pay.cpp
          /**
-          * TO DO: Ovi
+          * Claim rewards action.
           * 
-          * @details 
+          * @details Claim block producing and vote rewards.
+          * @param owner - the block producer account to claim rewards for.
           */
          [[eosio::action]]
          void claimrewards( const name owner );
 
          /**
-          * TO DO: Ovi
+          * Set privilege status for an account.
           * 
-          * @details 
+          * @details Allows to set privilege status for an account (turn it on/off).
+          * @param account - the account to set the privileged status for.
+          * @param is_priv - 0 for false, > 0 for true.
           */
          [[eosio::action]]
          void setpriv( name account, uint8_t is_priv );
 
          /**
-          * TO DO: Ovi
+          * Remove producer action.
           * 
-          * @details 
+          * @details Deactivates a producer by name, if not found asserts.
+          * @param producer - the producer account to deactivate.
           */
          [[eosio::action]]
          void rmvproducer( name producer );
 
          /**
-          * TO DO: Ovi
+          * Update revision action.
           * 
-          * @details 
+          * @details Updates the current revision. 
+          * @param revision - it has to be incremented by 1 compared with current revision.
+          * 
+          * @pre Current revision can not be higher than 254, and has to be smaller
+          * than or equal 1 (“set upper bound to greatest revision supported in the code”).
           */
          [[eosio::action]]
          void updtrevision( uint8_t revision );
 
          /**
-          * TO DO: Ovi
+          * Bid name action.
           * 
-          * @details 
+          * @details Allows an account `bidder` to place a bid for a name `newname`. 
+          * @param bidder - the account placing the bid,
+          * @param newname - the name the bid is placed for,
+          * @param bid - the amount of system tokens payed for the bid.
+          * 
+          * @pre Bids can be placed only on top-level suffix,
+          * @pre Non empty name,
+          * @pre Names longer than 12 chars are not allowed,
+          * @pre Names equal with 12 chars can be created without placing a bid,
+          * @pre Bid has to be bigger than zero,
+          * @pre Bid's symbol must be system token,
+          * @pre Bidder account has to be different than current highest bidder,
+          * @pre Bid must increase current bid by 10%,
+          * @pre Auction must still be opened.
           */
          [[eosio::action]]
          void bidname( name bidder, name newname, asset bid );
 
          /**
-          * TO DO: Ovi
+          * Bid refund action.
           * 
-          * @details 
+          * @details Allows the account `bidder` to get back the amount it bid so far on a `newname` name.
+          * 
+          * @param bidder - the account that gets refunded,
+          * @param newname - the name for which the bid was placed and now it gets refunded for.
           */
          [[eosio::action]]
          void bidrefund( name bidder, name newname );

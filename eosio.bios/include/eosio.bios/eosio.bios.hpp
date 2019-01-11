@@ -26,11 +26,6 @@
  * - eosio.token
  */
 
-/**
- * @defgroup eosionamespace eosio namespace
- * @ingroup eosiocontracts
- * @{
- */
 namespace eosio {
 
    using eosio::permission_level;
@@ -38,9 +33,6 @@ namespace eosio {
    using eosio::ignore;
 
    /**
-    * @addtogroup eosionamespace
-    * @{
-    * 
     * A weighted permission. 
     * 
     * @details Defines a weighted permission, that is a permission which has a weight associated. 
@@ -126,11 +118,10 @@ namespace eosio {
       EOSLIB_SERIALIZE(block_header, (timestamp)(producer)(confirmed)(previous)(transaction_mroot)(action_mroot)
                                      (schedule_version)(new_producers))
    };
-   /** @}*/ // end of @addtogroup eosionamespace
 
    /**
     * @defgroup eosiobios eosio.bios
-    * @ingroup eosionamespace
+    * @ingroup eosiocontracts
     * 
     * eosio.bios contract defines the actions that govern authentication, 
     * authorization, permissions, blockchain properties and producers schedule.
@@ -209,6 +200,8 @@ namespace eosio {
           * Set privilege status for an account.
           * 
           * @details Allows to set privilege status for an account (turn it on/off).
+          * @param account - the account to set the privileged status for.
+          * @param is_priv - 0 for false, > 0 for true.
           */
          [[eosio::action]]
          void setpriv( name account, uint8_t is_priv ) {
@@ -342,4 +335,3 @@ namespace eosio {
    };
    /** @}*/ // eof of @defgroup eosiobios eosio.bios
 } /// namespace eosio
-/** @}*/ // end of @defgroup eosionamespace eosio namespace

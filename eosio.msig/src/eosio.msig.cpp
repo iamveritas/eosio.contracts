@@ -6,7 +6,7 @@
 namespace eosio {
 
 /**
- * @ingroup eosionamespace
+ * @ingroup eosiocontracts
  * 
  * Returns a high resolution time_point 
  * 
