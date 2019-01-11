@@ -7,7 +7,7 @@
 namespace eosio {
    /**
     * @defgroup eosiowrap eosio.wrap
-    * @ingroup eosionamespace
+    * @ingroup eosiocontracts
     * eosio.wrap contract simplifies Block Producer superuser actions by making them more readable and easier to audit.
 
     * @details It does not grant block producers any additional powers that do not already exist within the 
@@ -22,12 +22,18 @@ namespace eosio {
          using contract::contract;
 
          /**
-          * Execute a transaction while bypassing regular authorization checks (requires authorization 
-          * of eosio.wrap which needs to be a privileged account).
+          * Execute action.
+          * 
+          * @details Executes a transaction while bypassing regular authorization checks.
+
+          * @param executer - the account that executes the transaction,
+          * @param trx - the transaction to be executed.
+          * 
+          * @pre requires authorization of eosio.wrap which needs to be a privileged account.
           */
          [[eosio::action]]
          void exec( ignore<name> executer, ignore<transaction> trx );
 
    };
-   /** @}*/
+   /** @}*/ // end of @defgroup eosiowrap eosio.wrap
 } /// namespace eosio

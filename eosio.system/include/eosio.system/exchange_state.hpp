@@ -7,7 +7,7 @@ namespace eosiosystem {
    using eosio::symbol;
 
    /**
-    * @addtogroup eosiosystemnamespace
+    * @addtogroup eosiosystem
     * @{
     */
    typedef double real_type;

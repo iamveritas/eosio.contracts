@@ -6,7 +6,7 @@
 namespace eosio {
    /**
     * @defgroup eosiomsig eosio.msig
-    * @ingroup eosionamespace
+    * @ingroup eosiocontracts
     * eosio.msig contract defines the structures and actions needed to manage the proposals and approvals on blockchain.
     * @{
     */

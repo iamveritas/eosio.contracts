@@ -19,10 +19,9 @@ namespace eosiosystem {
    using eosio::ignore;
 
    /**
-    * @addtogroup eosiosystemnamespace
+    * @addtogroup eosiosystem
     * @{
     */
-
    /**
     * A weighted permission. 
     * 
@@ -127,10 +126,6 @@ namespace eosiosystem {
 
    // Method parameters commented out to prevent generation of code that parses input data.
    /**
-    * @addtogroup eosiosystem
-    * @{
-    */
-   /**
     * The EOSIO core native contract that governs authorization and contracts' abi.
     * 
     * @details
@@ -162,9 +157,7 @@ namespace eosiosystem {
 
          // TO DO: Ovi annotate the last 8 actions
          /**
-          * Update authorization action
-          * 
-          * @details
+          * Update authorization action.
           */
          [[eosio::action]]
          void updateauth(  ignore<name>  account,
@@ -173,18 +166,14 @@ namespace eosiosystem {
                            ignore<authority> auth ) {}
 
          /**
-          * Delete authorization action
-          * 
-          * @details
+          * Delete authorization action.
           */
          [[eosio::action]]
          void deleteauth( ignore<name>  account,
                           ignore<name>  permission ) {}
 
          /**
-          * Link authorization action
-          * 
-          * @details
+          * Link authorization action.
           */
          [[eosio::action]]
          void linkauth(  ignore<name>    account,
@@ -193,9 +182,7 @@ namespace eosiosystem {
                          ignore<name>    requirement  ) {}
 
          /**
-          * Unlink authorization action
-          * 
-          * @details
+          * Unlink authorization action.
           */
          [[eosio::action]]
          void unlinkauth( ignore<name>  account,
@@ -203,15 +190,13 @@ namespace eosiosystem {
                           ignore<name>  type ) {}
 
          /**
-          * Cancel delay action
-          * 
-          * @details
+          * Cancel delay action.
           */
          [[eosio::action]]
          void canceldelay( ignore<permission_level> canceling_auth, ignore<capi_checksum256> trx_id ) {}
 
          /**
-          * On error action
+          * On error action.
           * 
           * @details Called every time an error occurs while a transaction was processed.
           */
@@ -219,21 +204,16 @@ namespace eosiosystem {
          void onerror( ignore<uint128_t> sender_id, ignore<std::vector<char>> sent_trx ) {}
 
          /**
-          * Set abi action
-          * 
-          * @details
+          * Set abi action.
           */
          [[eosio::action]]
          void setabi( name account, const std::vector<char>& abi );
 
          /**
-          * Set code action
-          * 
-          * @details
+          * Set code action.
           */
          [[eosio::action]]
          void setcode( name account, uint8_t vmtype, uint8_t vmversion, const std::vector<char>& code ) {}
    };
    /** @}*/ // @addtogroup eosiosystem
-   /** @}*/ // @addtogroup eosiosystemnamespace
 }
