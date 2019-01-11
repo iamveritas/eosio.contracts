@@ -19,8 +19,11 @@ namespace eosio {
 
    /**
     * @defgroup eosiotoken eosio.token
-    * @ingroup eosiocontracts
-    * @brief eosio.token contract defines the structures and actions which governs the tokens creation, issuing and transfer no blockchain.
+    * @ingroup eosionamespace
+    * 
+    * @brief eosio.token contract
+    * 
+    * @details eosio.token contract defines the structures and actions which governs the tokens creation, issuing and transfer no blockchain.
     * @{
     */
    class [[eosio::contract("eosio.token")]] token : public contract {
