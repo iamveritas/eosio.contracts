@@ -15,14 +15,12 @@
 #include <type_traits>
 #include <optional>
 
+/**
+ * @defgroup eosiosystemnamespace eosiosystem namespace
+ * @ingroup eosiocontracts
+ */
 namespace eosiosystem {
 
-   /**
-    * @defgroup eosiosystem eosio.system
-    * @ingroup eosiocontracts
-    * @brief eosio.system contract defines the structures and actions needed for blockchain's core functionality.
-    * @{
-    */
    using eosio::name;
    using eosio::asset;
    using eosio::symbol;
@@ -33,6 +31,13 @@ namespace eosiosystem {
    using eosio::time_point;
    using eosio::microseconds;
    using eosio::datastream;
+
+   /**
+    * @defgroup eosiosystem eosio.system
+    * @ingroup eosiosystemnamespace
+    * eosio.system contract defines the structures and actions needed for blockchain's core functionality.
+    * @{
+    */
 
    template<typename E, typename F>
    static inline auto has_field( F flags, E field )
@@ -53,6 +58,15 @@ namespace eosiosystem {
          return ( flags & ~static_cast<F>(field) );
    }
 
+   /**
+    * A name bid.
+    * 
+    * @details A name bid consists of:
+    * - a `newname` name that the bid is for
+    * - a `higher_bidder` account name that is the one with the highest bid so far
+    * - the `high_bid` which is amount of highest bid
+    * - and `last_bid_time` which is the time of the highest bid
+    */
    struct [[eosio::table, eosio::contract("eosio.system")]] name_bid {
      name            newname;
      name            high_bidder;
@@ -63,6 +77,13 @@ namespace eosiosystem {
      uint64_t by_high_bid()const { return static_cast<uint64_t>(-high_bid); }
    };
 
+   /**
+    * A bid refund.
+    * 
+    * @details A bid refund is defined by:
+    * - the `bidder` account name owning the refund
+    * - the `amount` to be refunded
+    */
    struct [[eosio::table, eosio::contract("eosio.system")]] bid_refund {
       name         bidder;
       asset        amount;
@@ -70,12 +91,25 @@ namespace eosiosystem {
       uint64_t primary_key()const { return bidder.value; }
    };
 
+   /**
+    * Name bid table
+    * 
+    * @details The name bid table is storing all the `name_bid`s instances.
+    */
    typedef eosio::multi_index< "namebids"_n, name_bid,
                                indexed_by<"highbid"_n, const_mem_fun<name_bid, uint64_t, &name_bid::by_high_bid>  >
                              > name_bid_table;
 
+   /**
+    * Bid refund table.
+    * 
+    * @details The bid refund table is storing all the `bid_refund`s instances.
+    */
    typedef eosio::multi_index< "bidrefunds"_n, bid_refund > bid_refund_table;
 
+   /**
+    * Defines new global state parameters.
+    */
    struct [[eosio::table("global"), eosio::contract("eosio.system")]] eosio_global_state : eosio::blockchain_parameters {
       uint64_t free_ram()const { return max_ram_size - total_ram_bytes_reserved; }
 
@@ -118,6 +152,9 @@ namespace eosiosystem {
                         (total_producer_votepay_share)(revision) )
    };
 
+   /**
+    * Defines new global state parameters added after version 1.3.0
+    */
    struct [[eosio::table("global3"), eosio::contract("eosio.system")]] eosio_global_state3 {
       eosio_global_state3() { }
       time_point        last_vpay_state_update;
@@ -126,6 +163,9 @@ namespace eosiosystem {
       EOSLIB_SERIALIZE( eosio_global_state3, (last_vpay_state_update)(total_vpay_share_change_rate) )
    };
 
+   /**
+    * Defines `producer_info` structure to be stored in `producer_info` table, added after version 1.0
+    */
    struct [[eosio::table, eosio::contract("eosio.system")]] producer_info {
       name                  owner;
       double                total_votes = 0;
@@ -146,6 +186,9 @@ namespace eosiosystem {
                         (unpaid_blocks)(last_claim_time)(location) )
    };
 
+   /**
+    * Defines new producer info structure to be stored in new producer info table, added after version 1.3.0
+    */
    struct [[eosio::table, eosio::contract("eosio.system")]] producer_info2 {
       name            owner;
       double          votepay_share = 0;
@@ -157,6 +200,15 @@ namespace eosiosystem {
       EOSLIB_SERIALIZE( producer_info2, (owner)(votepay_share)(last_votepay_share_update) )
    };
 
+   /**
+    * Voter info.
+    * 
+    * @details Voter info stores information about the voter:
+    * - `owner` the voter
+    * - `proxy` the proxy set by the voter, if any
+    * - `producers` the producers approved by this voter if no proxy set
+    * - `staked` the amount staked
+    */
    struct [[eosio::table, eosio::contract("eosio.system")]] voter_info {
       name                owner;     /// the voter
       name                proxy;     /// the proxy set by the voter, if any
@@ -194,21 +246,46 @@ namespace eosiosystem {
       EOSLIB_SERIALIZE( voter_info, (owner)(proxy)(producers)(staked)(last_vote_weight)(proxied_vote_weight)(is_proxy)(flags1)(reserved2)(reserved3) )
    };
 
+   /**
+    * Voters table
+    * 
+    * @details The voters table stores all the `voter_info`s instances, all voters information.
+    */
    typedef eosio::multi_index< "voters"_n, voter_info >  voters_table;
 
 
+   /**
+    * Defines producer info table added in version 1.0
+    */
    typedef eosio::multi_index< "producers"_n, producer_info,
                                indexed_by<"prototalvote"_n, const_mem_fun<producer_info, double, &producer_info::by_votes>  >
                              > producers_table;
+   /**
+    * Defines new producer info table added in version 1.3.0
+    */
    typedef eosio::multi_index< "producers2"_n, producer_info2 > producers_table2;
 
+   /**
+    * Global state singleton added in version 1.0
+    */
    typedef eosio::singleton< "global"_n, eosio_global_state >   global_state_singleton;
+   /**
+    * Global state singleton added in version 1.1.0
+    */
    typedef eosio::singleton< "global2"_n, eosio_global_state2 > global_state2_singleton;
+   /**
+    * Global state singleton added in version 1.3
+    */
    typedef eosio::singleton< "global3"_n, eosio_global_state3 > global_state3_singleton;
 
    //   static constexpr uint32_t     max_inflation_rate = 5;  // 5% annual inflation
    static constexpr uint32_t     seconds_per_day = 24 * 3600;
 
+   /**
+    * The EOSIO system contract.
+    * 
+    * @details The EOSIO system contract governs ram market, voters, producers, global state.
+    */
    class [[eosio::contract("eosio.system")]] system_contract : public native {
       private:
          voters_table            _voters;
@@ -235,9 +312,24 @@ namespace eosiosystem {
          static constexpr symbol ramcore_symbol = symbol(symbol_code("RAMCORE"), 4);
          static constexpr symbol ram_symbol     = symbol(symbol_code("RAM"), 0);
 
+         /**
+          * System contract constructor
+          * 
+          * @details Constructs a system contract based on name, code and data.
+          * 
+          * @params s    - the name of the contract
+          * TO DO: Ovi explain better the next param
+          * @params code - the code name of the contract
+          * @params ds   - the contract data represented as an `eosio::datastream`
+          */
          system_contract( name s, name code, datastream<const char*> ds );
          ~system_contract();
 
+         /**
+          * Returns the core symbol by system account name
+          * 
+          * @params system_account - the system account to get the core symbol for.
+          */
          static symbol get_core_symbol( name system_account = "eosio"_n ) {
             rammarket rm(system_account, system_account.value);
             const static auto sym = get_core_symbol( rm );
@@ -245,11 +337,43 @@ namespace eosiosystem {
          }
 
          // Actions:
+         /**
+          * Init action.
+          * 
+          * @details Init action initializes the system contract for a version and a symbol. 
+          * Only succeeds when:
+          * - version is 0 and 
+          * - symbol is found and
+          * - system token supply is greater than 0, 
+          * - and system contract wasn’t already been initialized.
+          */
          [[eosio::action]]
          void init( unsigned_int version, symbol core );
+
+         /**
+          * On block action.
+          * 
+          * @details This special action is triggered when a block is applied by the given producer 
+          * and cannot be generated from any other source. It is used to pay producers and calculate 
+          * missed blocks of other producers. Producer pay is deposited into the producer's stake 
+          * balance and can be withdrawn over time. If blocknum is the start of a new round this may 
+          * update the active producer config from the producer votes.
+          * 
+          * @param header - the block header produced.
+          */
          [[eosio::action]]
          void onblock( ignore<block_header> header );
 
+         /**
+          * Set account limits action.
+          * 
+          * @details Set the resource limits of an account
+          * 
+          * @param account - name of the account whose resource limit to be set
+          * @param ram_bytes - ram limit in absolute bytes
+          * @param net_weight - fractionally proportionate net limit of available resources based on (weight / total_weight_of_all_accounts)
+          * @param cpu_weight - fractionally proportionate cpu limit of available resources based on (weight / total_weight_of_all_accounts)
+          */
          [[eosio::action]]
          void setalimits( name account, int64_t ram_bytes, int64_t net_weight, int64_t cpu_weight );
 
@@ -265,98 +389,178 @@ namespace eosiosystem {
          // functions defined in delegate_bandwidth.cpp
 
          /**
-          *  Stakes SYS from the balance of 'from' for the benfit of 'receiver'.
-          *  If transfer == true, then 'receiver' can unstake to their account
-          *  Else 'from' can unstake at any time.
+          * Delegate bandwidth action.
+          * 
+          * @details Stakes SYS from the balance of `from` for the benfit of `receiver`.
+          * If transfer == true, then `receiver` can unstake to their account
+          * Else `from` can unstake at any time.
           */
          [[eosio::action]]
          void delegatebw( name from, name receiver,
                           asset stake_net_quantity, asset stake_cpu_quantity, bool transfer );
 
-
          /**
-          *  Decreases the total tokens delegated by from to receiver and/or
-          *  frees the memory associated with the delegation if there is nothing
-          *  left to delegate.
+          * Undelegate bandwitdh action.
+          * 
+          * @details Decreases the total tokens delegated by `from` to `receiver` and/or
+          * frees the memory associated with the delegation if there is nothing
+          * left to delegate.
           *
-          *  This will cause an immediate reduction in net/cpu bandwidth of the
-          *  receiver.
+          * This will cause an immediate reduction in net/cpu bandwidth of the
+          * receiver.
           *
-          *  A transaction is scheduled to send the tokens back to 'from' after
-          *  the staking period has passed. If existing transaction is scheduled, it
-          *  will be canceled and a new transaction issued that has the combined
-          *  undelegated amount.
+          * A transaction is scheduled to send the tokens back to `from` after
+          * the staking period has passed. If existing transaction is scheduled, it
+          * will be canceled and a new transaction issued that has the combined
+          * undelegated amount.
           *
-          *  The 'from' account loses voting power as a result of this call and
-          *  all producer tallies are updated.
+          * The `from` account loses voting power as a result of this call and
+          * all producer tallies are updated.
           */
          [[eosio::action]]
          void undelegatebw( name from, name receiver,
                             asset unstake_net_quantity, asset unstake_cpu_quantity );
 
-
          /**
-          * Increases receiver's ram quota based upon current price and quantity of
+          * Buy ram action.
+          * 
+          * @details Increases receiver's ram quota based upon current price and quantity of
           * tokens provided. An inline transfer from receiver to system contract of
           * tokens will be executed.
           */
          [[eosio::action]]
          void buyram( name payer, name receiver, asset quant );
+
+         /**
+          * Buy an specific amount of ram bytes action.
+          * 
+          * @details Increases receiver's ram in quantity of bytes provided. 
+          * An inline transfer from receiver to system contract of tokens will be executed.
+          */
          [[eosio::action]]
          void buyrambytes( name payer, name receiver, uint32_t bytes );
 
          /**
-          *  Reduces quota my bytes and then performs an inline transfer of tokens
-          *  to receiver based upon the average purchase price of the original quota.
+          * Sell ram action.
+          *  
+          * @details Reduces quota my bytes and then performs an inline transfer of tokens
+          * to receiver based upon the average purchase price of the original quota.
           */
          [[eosio::action]]
          void sellram( name account, int64_t bytes );
 
          /**
-          *  This action is called after the delegation-period to claim all pending
-          *  unstaked tokens belonging to owner
+          * Refund action.
+          * 
+          * @details This action is called after the delegation-period to claim all pending
+          * unstaked tokens belonging to owner
           */
          [[eosio::action]]
          void refund( name owner );
 
          // functions defined in voting.cpp
 
+         /**
+          * Register producer action.
+          * 
+          * @details This method will create a `producer_config` and `producer_info` object for `producer`.
+          */
          [[eosio::action]]
          void regproducer( const name producer, const public_key& producer_key, const std::string& url, uint16_t location );
 
+         /**
+          * TO DO: Ovi
+          * 
+          * @details 
+          */
          [[eosio::action]]
          void unregprod( const name producer );
 
+         /**
+          * TO DO: Ovi
+          * 
+          * @details 
+          */
          [[eosio::action]]
          void setram( uint64_t max_ram_size );
+         /**
+          * TO DO: Ovi
+          * 
+          * @details 
+          */
          [[eosio::action]]
          void setramrate( uint16_t bytes_per_block );
 
+         /**
+          * TO DO: Ovi
+          * 
+          * @details 
+          */
          [[eosio::action]]
          void voteproducer( const name voter, const name proxy, const std::vector<name>& producers );
 
+         /**
+          * TO DO: Ovi
+          * 
+          * @details 
+          */
          [[eosio::action]]
          void regproxy( const name proxy, bool isproxy );
 
+         /**
+          * TO DO: Ovi
+          * 
+          * @details 
+          */
          [[eosio::action]]
          void setparams( const eosio::blockchain_parameters& params );
 
          // functions defined in producer_pay.cpp
+         /**
+          * TO DO: Ovi
+          * 
+          * @details 
+          */
          [[eosio::action]]
          void claimrewards( const name owner );
 
+         /**
+          * TO DO: Ovi
+          * 
+          * @details 
+          */
          [[eosio::action]]
          void setpriv( name account, uint8_t is_priv );
 
+         /**
+          * TO DO: Ovi
+          * 
+          * @details 
+          */
          [[eosio::action]]
          void rmvproducer( name producer );
 
+         /**
+          * TO DO: Ovi
+          * 
+          * @details 
+          */
          [[eosio::action]]
          void updtrevision( uint8_t revision );
 
+         /**
+          * TO DO: Ovi
+          * 
+          * @details 
+          */
          [[eosio::action]]
          void bidname( name bidder, name newname, asset bid );
 
+         /**
+          * TO DO: Ovi
+          * 
+          * @details 
+          */
          [[eosio::action]]
          void bidrefund( name bidder, name newname );
 
@@ -395,5 +599,5 @@ namespace eosiosystem {
          double update_total_votepay_share( time_point ct,
                                             double additional_shares_delta = 0.0, double shares_rate_delta = 0.0 );
    };
-   /** @}*/
+   /** @}*/ // end of @defgroup eosiosystem eosio.system
 } /// eosiosystem
