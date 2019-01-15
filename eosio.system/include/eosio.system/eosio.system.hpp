@@ -286,10 +286,9 @@ namespace eosiosystem {
           * 
           * @details Constructs a system contract based on name, code and data.
           * 
-          * @params s    - the name of the contract,
-          * TO DO: Ovi explain better the next param
-          * @params code - the code name of the contract,
-          * @params ds   - the contract data represented as an `eosio::datastream`.
+          * @params s    - The name of the contract,
+          * @params code - The code name of the action this contract is processing,
+          * @params ds   - The contract data represented as an `eosio::datastream`.
           */
          system_contract( name s, name code, datastream<const char*> ds );
          ~system_contract();

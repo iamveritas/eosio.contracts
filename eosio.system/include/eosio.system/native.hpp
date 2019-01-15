@@ -136,6 +136,11 @@ namespace eosiosystem {
          using eosio::contract::contract;
 
          /**
+          * @{
+          * These actions map one-on-one with the ones defined in 
+          * [Native Action Handlers](@ref native_action_handlers) section.
+          */
+         /**
           * New account action 
           * 
           * @details Called after a new account is created. This code enforces resource-limits rules
@@ -157,7 +162,6 @@ namespace eosiosystem {
 
          /**
           * Update authorization action.
-          * TO DO: Ovi annotate the last 8 actions
           */
          [[eosio::action]]
          void updateauth(  ignore<name>  account,
@@ -214,6 +218,7 @@ namespace eosiosystem {
           */
          [[eosio::action]]
          void setcode( name account, uint8_t vmtype, uint8_t vmversion, const std::vector<char>& code ) {}
-   };
-   /** @}*/ // @addtogroup eosiosystem
+         /** @}*/
+  };
+   /** @}*/ // end of @addtogroup eosiosystem
 }
