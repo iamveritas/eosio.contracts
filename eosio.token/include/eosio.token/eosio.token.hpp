@@ -43,7 +43,7 @@ namespace eosio {
           * @pre maximum_supply has to be smaller than the maximum supply allowed by the system: 1^62 - 1.
           * @pre Maximum supply must be positive; 
           * 
-          * If validation passes a new entry in statstable for token symbol scope gets created.
+          * If validation is successful a new entry in statstable for token symbol scope gets created.
           */
          [[eosio::action]]
          void create( name   issuer,
@@ -93,13 +93,13 @@ namespace eosio {
           * 
           * @details Allows `ram_payer` to create an account `owner` with zero balance for 
           * token `symbol` at the expense of `ram_payer`.
-          * TO DO: Ovi extract more sources from the two links below
-          * more info here: https://github.com/EOSIO/eosio.contracts/issues/62 
-          * and here: https://github.com/EOSIO/eosio.contracts/issues/61
           * 
           * @param owner - the account to be created,
           * @param symbol - the token to be payed with by `ram_payer`,
           * @param ram_payer - the account that supports the cost of this action.
+          * 
+          * More information can be read [here](https://github.com/EOSIO/eosio.contracts/issues/62) 
+          * and [here](https://github.com/EOSIO/eosio.contracts/issues/61).
           */
          [[eosio::action]]
          void open( name owner, const symbol& symbol, name ram_payer );

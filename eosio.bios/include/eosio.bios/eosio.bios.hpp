@@ -24,6 +24,8 @@
  * 
  * The following unprivileged contract(s) are also part of the system.
  * - eosio.token
+ * 
+ * @{
  */
 
 namespace eosio {
@@ -119,6 +121,7 @@ namespace eosio {
                                      (schedule_version)(new_producers))
    };
 
+   /** @} */
    /**
     * @defgroup eosiobios eosio.bios
     * @ingroup eosiocontracts
@@ -131,6 +134,11 @@ namespace eosio {
    class [[eosio::contract("eosio.bios")]] bios : public contract {
       public:
          using contract::contract;
+         /**
+          * @{
+          * These actions map one-on-one with the ones defined in 
+          * [Native Action Handlers](@ref native_action_handlers) section.
+          */
          /**
           *  Called after a new account is created. This code enforces resource-limits rules
           *  for new accounts as well as new account naming conventions.
@@ -149,8 +157,7 @@ namespace eosio {
                           ignore<authority> owner,
                           ignore<authority> active){}
          /**
-          * TO DO: Ovi, annotate the following 7 actions which are not exposed in the contract
-          * at least we should say why are they defined here, for what purpose they server.
+          * Update authorization action.
           */
          [[eosio::action]]
          void updateauth(  ignore<name>  account,
@@ -158,29 +165,50 @@ namespace eosio {
                            ignore<name>  parent,
                            ignore<authority> auth ) {}
 
+         /**
+          * Delete authorization action.
+          */
          [[eosio::action]]
          void deleteauth( ignore<name>  account,
                           ignore<name>  permission ) {}
 
+         /**
+          * Link authorization action.
+          */
          [[eosio::action]]
          void linkauth(  ignore<name>    account,
                          ignore<name>    code,
                          ignore<name>    type,
                          ignore<name>    requirement  ) {}
 
+         /**
+          * Unlink authorization action.
+          */
          [[eosio::action]]
          void unlinkauth( ignore<name>  account,
                           ignore<name>  code,
                           ignore<name>  type ) {}
 
+         /**
+          * Cancel delay action.
+          */
          [[eosio::action]]
          void canceldelay( ignore<permission_level> canceling_auth, ignore<capi_checksum256> trx_id ) {}
 
+         /**
+          * On error action.
+          * 
+          * @details Called every time an error occurs while a transaction was processed.
+          */
          [[eosio::action]]
          void onerror( ignore<uint128_t> sender_id, ignore<std::vector<char>> sent_trx ) {}
 
+         /**
+          * Set code action.
+          */
          [[eosio::action]]
          void setcode( name account, uint8_t vmtype, uint8_t vmversion, const std::vector<char>& code ) {}
+         /** @}*/
 
          /**
           * Set privilege status for an account.
@@ -319,5 +347,5 @@ namespace eosio {
           */
          typedef eosio::multi_index< "abihash"_n, abi_hash > abi_hash_table;
    };
-   /** @}*/ // eof of @defgroup eosiobios eosio.bios
+   /** @}*/ // end of @defgroup eosiobios eosio.bios
 } /// namespace eosio
