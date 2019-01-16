@@ -495,7 +495,7 @@ namespace eosiosystem {
           * 
           * @params voter - the account to change the voted producers for,
           * @params proxy - the proxy to change the voted producers for,
-          * @producers - the list of producers to vote for.
+          * @params producers - the list of producers to vote for.
           * 
           * @pre Producers must be sorted from lowest to highest and must be registered and active
           * @pre If proxy is set then no producers can be voted for
