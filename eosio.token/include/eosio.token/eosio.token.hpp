@@ -110,11 +110,11 @@ namespace eosio {
           * @details This action is the opposite for open, it closes the account `owner` 
           * for token `symbol`.
           * 
-          * @pre The pair of owner plus symbol has to exist otherwise no action is executed,
-          * @pre If the pair of owner plus symbol exists, the balance has to be zero.
-          * 
           * @param owner - the owner account to execute the close action for,
           * @param symbol - the symbol of the token to execute the close action for.
+          * 
+          * @pre The pair of owner plus symbol has to exist otherwise no action is executed,
+          * @pre If the pair of owner plus symbol exists, the balance has to be zero.
           */
          [[eosio::action]]
          void close( name owner, const symbol& symbol );
