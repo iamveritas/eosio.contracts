@@ -282,12 +282,12 @@ namespace eosiosystem {
          static constexpr symbol ram_symbol     = symbol(symbol_code("RAM"), 0);
 
          /**
-          * System contract constructor
+          * System contract constructor.
           * 
-          * @details Constructs a system contract based on name, code and data.
+          * @details Constructs a system contract based on self account, code account and data.
           * 
-          * @params s    - The name of the contract,
-          * @params code - The code name of the action this contract is processing,
+          * @params s    - The current code account that is executing the action,
+          * @params code - The original code account that executed the action,
           * @params ds   - The contract data represented as an `eosio::datastream`.
           */
          system_contract( name s, name code, datastream<const char*> ds );
