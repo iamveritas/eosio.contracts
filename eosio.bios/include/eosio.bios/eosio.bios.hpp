@@ -5,9 +5,7 @@
 #include <eosiolib/privileged.hpp>
 #include <eosiolib/producer_schedule.hpp>
 
-/**
- *  @defgroup eosiocontracts EOSIO Contracts
- * 
+/** 
  * EOSIO Contracts
  * 
  * @details The design of the EOSIO blockchain calls for a number of smart contracts that are run at a 
@@ -24,8 +22,6 @@
  * 
  * The following unprivileged contract(s) are also part of the system.
  * - eosio.token
- * 
- * @{
  */
 
 namespace eosio {
@@ -121,7 +117,6 @@ namespace eosio {
                                      (schedule_version)(new_producers))
    };
 
-   /** @} */
    /**
     * @defgroup eosiobios eosio.bios
     * @ingroup eosiocontracts
